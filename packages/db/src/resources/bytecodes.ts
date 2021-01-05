@@ -34,6 +34,8 @@ export const bytecodes: Definition<"bytecodes"> = {
 
     scalar ByteOffset
 
+    scalar ImmutableReferences
+
     type Instruction {
       opcode: String!
       programCounter: Int!
@@ -43,6 +45,7 @@ export const bytecodes: Definition<"bytecodes"> = {
     input BytecodeInput {
       bytes: Bytes!
       linkReferences: [LinkReferenceInput]
+      immutableReferences: ImmutableReferences
     }
 
     input LinkReferenceInput {
