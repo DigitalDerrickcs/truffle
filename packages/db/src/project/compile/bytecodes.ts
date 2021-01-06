@@ -9,6 +9,7 @@ export const generateBytecodesLoad = Batch.Contracts.generate<{
   contract: {
     bytecode: DataModel.BytecodeInput;
     deployedBytecode: DataModel.BytecodeInput;
+    immutableReferences: { [key: string]: {}[] };
   };
   source: {};
   resources: {
@@ -18,6 +19,7 @@ export const generateBytecodesLoad = Batch.Contracts.generate<{
   entry: {
     callBytecode: DataModel.BytecodeInput;
     createBytecode: DataModel.BytecodeInput;
+    immutableReferences: { [key: string]: {}[] };
   };
   result: {
     callBytecode: IdObject<DataModel.Bytecode>;
@@ -25,18 +27,26 @@ export const generateBytecodesLoad = Batch.Contracts.generate<{
   };
 }>({
   extract({
-    input: { bytecode: createBytecode, deployedBytecode: callBytecode }
+    input: {
+      bytecode: createBytecode,
+      deployedBytecode: callBytecode,
+      immutableReferences
+    }
   }) {
     return {
       createBytecode,
-      callBytecode
+      callBytecode,
+      immutableReferences
     };
   },
 
   *process({ entries }) {
     const callBytecodes = yield* resources.load(
       "bytecodes",
-      entries.map(({ callBytecode }) => callBytecode)
+      entries.map(({ callBytecode, immutableReferences }) => ({
+        ...callBytecode,
+        immutableReferences
+      }))
     );
 
     const createBytecodes = yield* resources.load(

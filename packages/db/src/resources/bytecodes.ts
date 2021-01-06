@@ -22,6 +22,7 @@ export const bytecodes: Definition<"bytecodes"> = {
       bytes: Bytes!
       linkReferences: [LinkReference]
       instructions(count: Int): [Instruction!]
+      immutableReferences: ImmutableReferences
     }
 
     scalar Bytes
