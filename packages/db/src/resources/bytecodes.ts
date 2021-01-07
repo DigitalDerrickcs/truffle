@@ -90,10 +90,6 @@ export const bytecodes: Definition<"bytecodes"> = {
       },
       immutableReferences: {
         async resolve({ immutableReferences }, {}, {}) {
-          console.debug(
-            "resolving immutable references " +
-              JSON.stringify(immutableReferences)
-          );
           let referencesArray = [];
 
           if (
