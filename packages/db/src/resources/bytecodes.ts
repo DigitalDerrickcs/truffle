@@ -16,13 +16,13 @@ export const bytecodes: Definition<"bytecodes"> = {
     ResourcesMutate: "BytecodesAdd"
   },
   createIndexes: [],
-  idFields: ["bytes", "linkReferences"],
+  idFields: ["bytes", "linkReferences", "immutableReferences"],
   typeDefs: gql`
     type Bytecode implements Resource {
       bytes: Bytes!
       linkReferences: [LinkReference]
       instructions(count: Int): [Instruction!]
-      immutableReferences: ImmutableReferences
+      immutableReferences: [ImmutableReferences]
     }
 
     scalar Bytes
@@ -33,9 +33,17 @@ export const bytecodes: Definition<"bytecodes"> = {
       length: Int!
     }
 
-    scalar ByteOffset
+    type ImmutableReferences {
+      ASTId: String!
+      references: [ImmutableReference]
+    }
 
-    scalar ImmutableReferences
+    type ImmutableReference {
+      start: Int!
+      length: Int!
+    }
+
+    scalar ByteOffset
 
     type Instruction {
       opcode: String!
@@ -46,7 +54,17 @@ export const bytecodes: Definition<"bytecodes"> = {
     input BytecodeInput {
       bytes: Bytes!
       linkReferences: [LinkReferenceInput]
-      immutableReferences: ImmutableReferences
+      immutableReferences: [ImmutableReferencesInput]
+    }
+
+    input ImmutableReferencesInput {
+      ASTId: String!
+      references: [ImmutableReferenceInput]
+    }
+
+    input ImmutableReferenceInput {
+      length: Int!
+      start: Int!
     }
 
     input LinkReferenceInput {
@@ -68,6 +86,28 @@ export const bytecodes: Definition<"bytecodes"> = {
               pushData
             })
           );
+        }
+      },
+      immutableReferences: {
+        async resolve({ immutableReferences }, {}, {}) {
+          console.debug(
+            "resolving immutable references " +
+              JSON.stringify(immutableReferences)
+          );
+          let referencesArray = [];
+
+          if (
+            immutableReferences &&
+            Object.keys(immutableReferences).length > 0
+          ) {
+            Object.entries(immutableReferences).map(immutableReference => {
+              referencesArray.push({
+                ASTId: immutableReference[0],
+                references: immutableReference[1]
+              });
+            });
+          }
+          return referencesArray;
         }
       }
     }
