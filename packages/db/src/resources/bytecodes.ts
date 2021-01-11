@@ -98,8 +98,8 @@ export const bytecodes: Definition<"bytecodes"> = {
           ) {
             Object.entries(immutableReferences).map(immutableReference => {
               referencesArray.push({
-                ASTId: immutableReference[0],
-                references: immutableReference[1]
+                ASTId: immutableReference[1]["ASTId"],
+                references: immutableReference[1]["references"]
               });
             });
           }
